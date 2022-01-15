@@ -42,16 +42,31 @@ function createCartItemElement({ sku, name, salePrice }) {
   return li;
 }
 
-// const sectionItems = document.querySelector('.items');
-
 async function getProductsFromApi(product = 'computador') {
   const { results } = await fetchProducts(product);
   return results;
 }
 
+async function getItemFromApi(itemId) {
+  const { id, title, price } = await fetchItem(itemId);
+  return { id, title, price };
+}
+
+const addItem = async (itemId) => {
+  const olElement = document.querySelector('.cart__items');
+
+  const {
+    id: sku,
+    title: name,
+    price: salePrice,
+  } = await getItemFromApi(itemId);
+
+  const element = createCartItemElement({ sku, name, salePrice });
+  olElement.appendChild(element);
+};
+
 const addProductsSection = (arrayComputers) => {
   const sectionItems = document.querySelector('.items');
-
   arrayComputers.forEach((computer) => {
     const objComputer = {
       sku: computer.id,
@@ -59,6 +74,12 @@ const addProductsSection = (arrayComputers) => {
       image: computer.thumbnail,
     };
     const element = createProductItemElement(objComputer);
+
+    /* Insert function onClick each button */
+    const btnAddToCart = element.lastChild;
+    btnAddToCart.setAttribute('id', computer.id);
+    btnAddToCart.addEventListener('click', () => addItem(computer.id));
+
     sectionItems.appendChild(element);
   });
 };
