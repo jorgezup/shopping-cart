@@ -10,14 +10,14 @@ describe('1 - Teste a função fecthProducts', () => {
     await fetchProducts('computador');
     expect(fetch).toHaveBeenCalled();
   });
-  it('Should receive an parameter "computador" and verifiy whether the function has been called correctly', async () => {
+  it('Should receive an parameter "computador" and verify whether the function has been called correctly', async () => {
     const query = 'computador';
     const endpoint = `https://api.mercadolibre.com/sites/MLB/search?q=${query}`;
     await fetchProducts(query);
 
     expect(fetch).toHaveBeenCalledWith(endpoint);
   });
-  it('Should receive an structure and verifiy whether this structure is the same as "computerSearch"', async () => {
+  it('Should receive an structure and verify whether this structure is the same as "computerSearch"', async () => {
     const response = await fetchProducts('computador');
 
     expect(response).toMatchObject(computadorSearch);
