@@ -30,8 +30,17 @@ function getSkuFromProductItem(item) {
   return item.querySelector('span.item__sku').innerText;
 }
 
+const removeItemFromLocalStorage = (itemId) => {
+  const arrayOfItems = getSavedCartItems();
+  const newArrayOfItems = arrayOfItems.filter((item) => item.sku !== itemId);
+  localStorage.removeItem('cartItems');
+  localStorage.setItem('cartItems', JSON.stringify(newArrayOfItems));
+};
+
 function cartItemClickListener(event) {
   event.target.parentNode.removeChild(event.target);
+  const itemId = event.target.textContent.split(' ')[1];
+  removeItemFromLocalStorage(itemId);
 }
 
 function createCartItemElement({ sku, name, salePrice }) {
@@ -39,6 +48,7 @@ function createCartItemElement({ sku, name, salePrice }) {
   li.className = 'cart__item';
   li.innerText = `SKU: ${sku} | NAME: ${name} | PRICE: $${salePrice}`;
   li.addEventListener('click', cartItemClickListener);
+
   return li;
 }
 
@@ -63,6 +73,8 @@ const addItem = async (itemId) => {
 
   const element = createCartItemElement({ sku, name, salePrice });
   olElement.appendChild(element);
+
+  saveCartItems({ sku, name, salePrice });
 };
 
 const addProductsSection = (arrayComputers) => {
@@ -84,11 +96,29 @@ const addProductsSection = (arrayComputers) => {
   });
 };
 
+const getItemsFromLocalStorage = () => {
+  const cartArray = getSavedCartItems();
+  const olElement = document.querySelector('.cart__items');
+  if (!cartArray) return;
+  cartArray.forEach(({ sku, name, salePrice }) => {
+    const element = createCartItemElement({ sku, name, salePrice });
+    olElement.appendChild(element);
+  });
+};
+
 async function init() {
   const listOfProducts = await getProductsFromApi('computador');
   addProductsSection(listOfProducts);
+  // const itemsLocalStorage = getSavedCartItems();
+  // if (itemsLocalStorage) {
+  //   itemsLocalStorage.forEach(({ sku, name, salePrice }) => {
+  //     const element = createCartItemElement({ sku, name, salePrice });
+  //     olElement.appendChild(element);
+  //   });
+  // }
 }
 
 window.onload = () => {
   init();
+  getItemsFromLocalStorage();
 };
