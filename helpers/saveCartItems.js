@@ -5,10 +5,11 @@ const saveCartItems = (item) => {
     const cartArray = [];
     cartArray.push(item);
     localStorage.setItem('cartItems', JSON.stringify(cartArray));
+  } else {
+    const arrayOfItems = JSON.parse(cartItems);
+    arrayOfItems.push(item);
+    localStorage.setItem('cartItems', JSON.stringify(arrayOfItems));
   }
-  const arrayOfItems = JSON.parse(cartItems);
-  arrayOfItems.push(item);
-  localStorage.setItem('cartItems', JSON.stringify(arrayOfItems));
 };
 
 if (typeof module !== 'undefined') {
