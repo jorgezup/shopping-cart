@@ -1,18 +1,18 @@
-function createProductImageElement(imageSource) {
+const createProductImageElement = (imageSource) => {
   const img = document.createElement('img');
   img.className = 'item__image';
   img.src = imageSource;
   return img;
-}
+};
 
-function createCustomElement(element, className, innerText) {
+const createCustomElement = (element, className, innerText) => {
   const e = document.createElement(element);
   e.className = className;
   e.innerText = innerText;
   return e;
-}
+};
 
-function createProductItemElement({ sku, name, image }) {
+const createProductItemElement = ({ sku, name, image }) => {
   const section = document.createElement('section');
   section.className = 'item';
 
@@ -24,11 +24,10 @@ function createProductItemElement({ sku, name, image }) {
   );
 
   return section;
-}
+};
 
-function getSkuFromProductItem(item) {
-  return item.querySelector('span.item__sku').innerText;
-}
+const getSkuFromProductItem = (item) =>
+  item.querySelector('span.item__sku').innerText;
 
 const removeItemFromLocalStorage = (itemId) => {
   const arrayOfItems = getSavedCartItems();
@@ -37,30 +36,30 @@ const removeItemFromLocalStorage = (itemId) => {
   localStorage.setItem('cartItems', JSON.stringify(newArrayOfItems));
 };
 
-function cartItemClickListener(event) {
+const cartItemClickListener = (event) => {
   event.target.parentNode.removeChild(event.target);
   const itemId = event.target.textContent.split(' ')[1];
   removeItemFromLocalStorage(itemId);
-}
+};
 
-function createCartItemElement({ sku, name, salePrice }) {
+const createCartItemElement = ({ sku, name, salePrice }) => {
   const li = document.createElement('li');
   li.className = 'cart__item';
   li.innerText = `SKU: ${sku} | NAME: ${name} | PRICE: $${salePrice}`;
   li.addEventListener('click', cartItemClickListener);
 
   return li;
-}
+};
 
-async function getProductsFromApi(product = 'computador') {
+const getProductsFromApi = async (product = 'computador') => {
   const { results } = await fetchProducts(product);
   return results;
-}
+};
 
-async function getItemFromApi(itemId) {
+const getItemFromApi = async (itemId) => {
   const { id, title, price } = await fetchItem(itemId);
   return { id, title, price };
-}
+};
 
 const addItem = async (itemId) => {
   const olElement = document.querySelector('.cart__items');
@@ -106,17 +105,10 @@ const getItemsFromLocalStorage = () => {
   });
 };
 
-async function init() {
+const init = async () => {
   const listOfProducts = await getProductsFromApi('computador');
   addProductsSection(listOfProducts);
-  // const itemsLocalStorage = getSavedCartItems();
-  // if (itemsLocalStorage) {
-  //   itemsLocalStorage.forEach(({ sku, name, salePrice }) => {
-  //     const element = createCartItemElement({ sku, name, salePrice });
-  //     olElement.appendChild(element);
-  //   });
-  // }
-}
+};
 
 window.onload = () => {
   init();
