@@ -105,9 +105,17 @@ const getItemsFromLocalStorage = () => {
   });
 };
 
+const cleanCart = () => {
+  const olElement = document.querySelector('.cart__items');
+  localStorage.removeItem('cartItems');
+  olElement.innerHTML = '';
+};
+
 const init = async () => {
   const listOfProducts = await getProductsFromApi('computador');
   addProductsSection(listOfProducts);
+  const emptyCartBtn = document.querySelector('.empty-cart');
+  emptyCartBtn.addEventListener('click', cleanCart);
 };
 
 window.onload = () => {
