@@ -1,3 +1,5 @@
+const olElement = document.querySelector('.cart__items');
+
 const createProductImageElement = (imageSource) => {
   const img = document.createElement('img');
   img.className = 'item__image';
@@ -26,14 +28,35 @@ const createProductItemElement = ({ sku, name, image }) => {
   return section;
 };
 
-const getSkuFromProductItem = (item) =>
-  item.querySelector('span.item__sku').innerText;
+// const getSkuFromProductItem = (item) =>
+//   item.querySelector('span.item__sku').innerText;
+
+const sumTotalPrices = () => {
+  const arrayOfItems = getSavedCartItems();
+
+  if (arrayOfItems) {
+    console.log(arrayOfItems);
+    const totalPrice = arrayOfItems.reduce(
+      (acc, item) => acc + item.salePrice,
+      0,
+    );
+    return totalPrice;
+  }
+  return 0;
+};
+
+const updateTotalPrice = () => {
+  const spanElement = document.querySelector('.total-price');
+  console.log(sumTotalPrices());
+  spanElement.textContent = sumTotalPrices();
+};
 
 const removeItemFromLocalStorage = (itemId) => {
   const arrayOfItems = getSavedCartItems();
   const newArrayOfItems = arrayOfItems.filter((item) => item.sku !== itemId);
   localStorage.removeItem('cartItems');
   localStorage.setItem('cartItems', JSON.stringify(newArrayOfItems));
+  updateTotalPrice();
 };
 
 const cartItemClickListener = (event) => {
@@ -62,8 +85,6 @@ const getItemFromApi = async (itemId) => {
 };
 
 const addItem = async (itemId) => {
-  const olElement = document.querySelector('.cart__items');
-
   const {
     id: sku,
     title: name,
@@ -74,6 +95,7 @@ const addItem = async (itemId) => {
   olElement.appendChild(element);
 
   saveCartItems({ sku, name, salePrice });
+  await updateTotalPrice();
 };
 
 const addProductsSection = (arrayComputers) => {
@@ -97,7 +119,6 @@ const addProductsSection = (arrayComputers) => {
 
 const getItemsFromLocalStorage = () => {
   const cartArray = getSavedCartItems();
-  const olElement = document.querySelector('.cart__items');
   if (!cartArray) return;
   cartArray.forEach(({ sku, name, salePrice }) => {
     const element = createCartItemElement({ sku, name, salePrice });
@@ -105,17 +126,29 @@ const getItemsFromLocalStorage = () => {
   });
 };
 
+const createSpanElement = () => {
+  const sectionCart = document.querySelector('.cart');
+  const spanElement = document.createElement('span');
+  spanElement.classList.add('total-price');
+  sectionCart.appendChild(spanElement);
+  spanElement.textContent = sumTotalPrices();
+};
+
+const emptyCartBtn = document.querySelector('.empty-cart');
+
 const cleanCart = () => {
-  const olElement = document.querySelector('.cart__items');
   localStorage.removeItem('cartItems');
   olElement.innerHTML = '';
+  updateTotalPrice();
 };
 
 const init = async () => {
   const listOfProducts = await getProductsFromApi('computador');
   addProductsSection(listOfProducts);
-  const emptyCartBtn = document.querySelector('.empty-cart');
+
   emptyCartBtn.addEventListener('click', cleanCart);
+
+  createSpanElement();
 };
 
 window.onload = () => {
