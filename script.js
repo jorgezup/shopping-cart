@@ -1,5 +1,32 @@
 const olElement = document.querySelector('.cart__items');
 
+const createElementeLoading = () => {
+  const divContainer = document.querySelector('.container');
+  const divElement = document.createElement('div');
+  // const pElement = document.createElement('p');
+
+  // pElement.textContent = 'carregando...';
+
+  divElement.classList.add('loading');
+  // divElement.style.display = 'none';
+  divElement.textContent = 'carregando...';
+
+  // divElement.appendChild(pElement);
+  divContainer.appendChild(divElement);
+};
+
+const setStateElement = (state) => {
+  if (state) {
+    createElementeLoading();
+    // div.style.display = 'block';
+  } else {
+    const divContainer = document.querySelector('.container');
+    const divLoading = document.querySelector('.loading');
+    divContainer.removeChild(divLoading);
+    // div.style.display = 'none';
+  }
+};
+
 const createProductImageElement = (imageSource) => {
   const img = document.createElement('img');
   img.className = 'item__image';
@@ -35,7 +62,6 @@ const sumTotalPrices = () => {
   const arrayOfItems = getSavedCartItems();
 
   if (arrayOfItems) {
-    console.log(arrayOfItems);
     const totalPrice = arrayOfItems.reduce(
       (acc, item) => acc + item.salePrice,
       0,
@@ -47,7 +73,6 @@ const sumTotalPrices = () => {
 
 const updateTotalPrice = () => {
   const spanElement = document.querySelector('.total-price');
-  console.log(sumTotalPrices());
   spanElement.textContent = sumTotalPrices();
 };
 
@@ -75,12 +100,16 @@ const createCartItemElement = ({ sku, name, salePrice }) => {
 };
 
 const getProductsFromApi = async (product = 'computador') => {
+  setStateElement(true);
   const { results } = await fetchProducts(product);
+  setStateElement(false);
   return results;
 };
 
 const getItemFromApi = async (itemId) => {
+  setStateElement(true);
   const { id, title, price } = await fetchItem(itemId);
+  setStateElement(false);
   return { id, title, price };
 };
 
@@ -95,7 +124,7 @@ const addItem = async (itemId) => {
   olElement.appendChild(element);
 
   saveCartItems({ sku, name, salePrice });
-  await updateTotalPrice();
+  updateTotalPrice();
 };
 
 const addProductsSection = (arrayComputers) => {
@@ -143,6 +172,8 @@ const cleanCart = () => {
 };
 
 const init = async () => {
+  // createElementeLoading();
+
   const listOfProducts = await getProductsFromApi('computador');
   addProductsSection(listOfProducts);
 
