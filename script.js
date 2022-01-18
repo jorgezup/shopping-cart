@@ -113,6 +113,12 @@ const getItemFromApi = async (itemId) => {
   return { id, title, price };
 };
 
+const addItemToArrayOfLocalStorage = (item) => {
+  const arrayOfItems = getSavedCartItems();
+  arrayOfItems.push(item);
+  saveCartItems(arrayOfItems);
+};
+
 const addItem = async (itemId) => {
   const {
     id: sku,
@@ -123,7 +129,7 @@ const addItem = async (itemId) => {
   const element = createCartItemElement({ sku, name, salePrice });
   olElement.appendChild(element);
 
-  saveCartItems({ sku, name, salePrice });
+  addItemToArrayOfLocalStorage({ sku, name, salePrice });
   updateTotalPrice();
 };
 
@@ -185,4 +191,5 @@ const init = async () => {
 window.onload = () => {
   init();
   getItemsFromLocalStorage();
+  getSavedCartItems();
 };
