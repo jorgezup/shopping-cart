@@ -58,8 +58,16 @@ const createProductItemElement = ({ sku, name, image }) => {
 // const getSkuFromProductItem = (item) =>
 //   item.querySelector('span.item__sku').innerText;
 
+const retrieveDataFromLocalStorage = () => {
+  const cartItems = getSavedCartItems();
+  if (!cartItems) return [];
+  const cartItemsObj = JSON.parse(cartItems);
+
+  return cartItemsObj;
+};
+
 const sumTotalPrices = () => {
-  const arrayOfItems = getSavedCartItems();
+  const arrayOfItems = retrieveDataFromLocalStorage();
 
   if (arrayOfItems) {
     const totalPrice = arrayOfItems.reduce(
@@ -77,7 +85,7 @@ const updateTotalPrice = () => {
 };
 
 const removeItemFromLocalStorage = (itemId) => {
-  const arrayOfItems = getSavedCartItems();
+  const arrayOfItems = retrieveDataFromLocalStorage();
   const newArrayOfItems = arrayOfItems.filter((item) => item.sku !== itemId);
   localStorage.removeItem('cartItems');
   localStorage.setItem('cartItems', JSON.stringify(newArrayOfItems));
@@ -114,7 +122,8 @@ const getItemFromApi = async (itemId) => {
 };
 
 const addItemToArrayOfLocalStorage = (item) => {
-  const arrayOfItems = getSavedCartItems();
+  const arrayOfItems = retrieveDataFromLocalStorage();
+
   arrayOfItems.push(item);
   saveCartItems(arrayOfItems);
 };
@@ -153,7 +162,7 @@ const addProductsSection = (arrayComputers) => {
 };
 
 const getItemsFromLocalStorage = () => {
-  const cartArray = getSavedCartItems();
+  const cartArray = retrieveDataFromLocalStorage();
   if (!cartArray) return;
   cartArray.forEach(({ sku, name, salePrice }) => {
     const element = createCartItemElement({ sku, name, salePrice });
@@ -191,5 +200,4 @@ const init = async () => {
 window.onload = () => {
   init();
   getItemsFromLocalStorage();
-  getSavedCartItems();
 };
